@@ -316,7 +316,6 @@ double evaluateExpression(const char *expr, int *errorPos)
         return 0;
     }
 
-    // Обработка оставшихся операторов
     while (opStack!=NULL) {
         char op = charPeek(opStack);
         opStack = charPop(opStack);
