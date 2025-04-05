@@ -114,3 +114,242 @@ Stack* mergeStacks(Stack* stack1, Stack* stack2) {
     }
     return resultStack;
 }
+
+CharStack *charPush(CharStack *s, char c)
+{
+    CharStack *new = malloc(sizeof(CharStack));
+    if(new == NULL){
+        fprintf(stderr, "malloc fail\n");
+        exit(1);
+    }
+    new->data = c;
+    new->next = s;
+    return new;
+}
+
+CharStack *charPop(CharStack *s)
+{
+    if (s != NULL) {
+       CharStack* new = s->next;
+       free(s);
+       return new;
+    }
+    return NULL;
+}
+
+char charPeek(CharStack *s)
+{
+    if (s!=NULL) {
+        return s->data;
+    }
+    return '\0';
+}
+
+DoubleStack* doublePush(DoubleStack *stack, double data)
+{
+    DoubleStack* ptr = malloc(sizeof(DoubleStack));
+    if(ptr == NULL){
+        fprintf(stderr, "malloc fail\n");
+        exit(1);
+    }
+    ptr->data = data;
+    ptr->next = stack;
+    return ptr;
+}
+
+DoubleStack *doublePop(DoubleStack *s)
+{
+    if (s!=NULL) {
+        DoubleStack *new = s->next;
+        free(s);
+        return new;
+    }
+    return NULL;
+}
+double doublePeek(DoubleStack *s)
+{
+    if (s!=NULL) {
+        return s->data;
+    }
+    return 0.0;
+}
+int isOperator(char c)
+{
+    return c == '+' || c == '-' || c == '*' || c == '/';
+}
+
+int precedence(char op)
+{
+    switch (op) {
+        case '+':
+        case '-': return 1;
+        case '*':
+        case '/': return 2;
+        default: return 0;
+    }
+}
+
+int isDigitOrDot(char c)
+{
+    return isdigit(c) || c == '.';
+}
+
+
+double evaluateExpression(const char *expr, int *errorPos)
+{
+    CharStack *opStack = NULL;
+    DoubleStack *valStack = NULL;
+
+
+    int i = 0;
+    unsigned int len = strlen(expr);
+    int unary = 1;
+
+    while (i < len) {
+        if (expr[i] == ' ') {
+            i++;
+            continue;
+        }
+
+        if (isDigitOrDot(expr[i])) {
+            char numStr[32];
+            int j = 0;
+            int dotCount = 0;
+
+            while (i < len && isDigitOrDot(expr[i])) {
+                if (expr[i] == '.') {
+                    if (++dotCount > 1) {
+                        *errorPos = i;
+                        return 0;
+                    }
+                }
+                numStr[j++] = expr[i++];
+            }
+            numStr[j] = '\0';
+
+            double num = atof(numStr);
+            valStack = doublePush(valStack, num);
+            unary = 0;
+            continue;
+        }
+
+
+        if (expr[i] == '(') {
+            opStack = charPush(opStack, expr[i]);
+            i++;
+            unary = 1;
+            continue;
+        }
+
+        if (expr[i] == ')') {
+            while (opStack!=NULL && charPeek(opStack) != '(') {
+                char op = charPeek(opStack);
+                opStack = charPop(opStack);
+                double b = doublePeek(valStack);
+                valStack = doublePop(valStack);
+                double a = doublePeek(valStack);
+                valStack = doublePop(valStack);
+                switch (op) {
+                    case '+': valStack = doublePush(valStack, a + b); break;
+                    case '-': valStack = doublePush(valStack, a - b); break;
+                    case '*': valStack = doublePush(valStack, a * b); break;
+                    case '/':
+                        if (b == 0) {
+                            *errorPos = i;
+                            return 0;
+                        }
+                        valStack = doublePush(valStack, a / b);
+                        break;
+                }
+            }
+
+            if (opStack == NULL) {
+                *errorPos = i;
+                while(valStack != NULL)
+                {
+                    valStack = doublePop(valStack);
+                }
+                return 0;
+            }
+            opStack = charPop(opStack);
+            i++;
+            unary = 0;
+            continue;
+        }
+
+
+        if (isOperator(expr[i])) {
+
+            if (expr[i] == '-' && unary) {
+                valStack = doublePush(valStack, 0);
+            }
+
+            while (opStack!=NULL &&
+                   charPeek(opStack) != '(' &&
+                   precedence(charPeek(opStack)) >= precedence(expr[i])) {
+                char op = charPeek(opStack);
+                opStack = charPop(opStack);
+                double b = doublePeek(valStack);
+                valStack = doublePop(valStack);
+                double a = doublePeek(valStack);
+                valStack = doublePop(valStack);
+                switch (op) {
+                    case '+': valStack = doublePush(valStack, a + b); break;
+                    case '-': valStack = doublePush(valStack, a - b); break;
+                    case '*': valStack = doublePush(valStack, a * b); break;
+                    case '/':
+                        if (b == 0) {
+                            *errorPos = i;
+                            return 0;
+                        }
+                        valStack = doublePush(valStack, a / b);
+                        break;
+                }
+            }
+            opStack = charPush(opStack, expr[i]);
+            i++;
+            unary = 1;
+            continue;
+        }
+        printf("%c", expr[i]);
+        *errorPos = i;
+        return 0;
+    }
+
+    // Обработка оставшихся операторов
+    while (opStack!=NULL) {
+        char op = charPeek(opStack);
+        opStack = charPop(opStack);
+        if (op == '(') {
+            *errorPos = i;
+            return 0;
+        }
+
+        double b = doublePeek(valStack);
+        valStack = doublePop(valStack);
+        double a = doublePeek(valStack);
+        valStack = doublePop(valStack);
+
+        switch (op) {
+            case '+': valStack = doublePush(valStack, a + b); break;
+            case '-': valStack = doublePush(valStack, a - b); break;
+            case '*': valStack = doublePush(valStack, a * b); break;
+            case '/':
+                if (b == 0) {
+                    *errorPos = i;
+                    return 0;
+                }
+                valStack = doublePush(valStack, a / b);
+                break;
+        }
+    }
+    double answer = doublePeek(valStack);
+    valStack = doublePop(valStack);
+    if (valStack != NULL) {
+        *errorPos = i;
+        while(valStack != NULL)
+            valStack = doublePop(valStack);
+        return 0;
+    }
+    return answer;
+}

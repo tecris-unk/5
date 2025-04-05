@@ -102,5 +102,31 @@ void uniteAndSortTwoStacks()
 }
 void mathExpressions()
 {
+    printf("input elements in input.txt\n"
+           "click enter to continue");
+    while(getchar()!='\n');
+    FILE *input = fopen("input.txt", "r");
+    FILE* output = fopen("output.txt", "w");
+    if(input == NULL)
+    {
+        printf("cant open file\n");
+        return;
+    }
 
+    char line[256];
+    while (fgets(line, sizeof(line), input)) {
+        line[strcspn(line, "\n")] = '\0';
+
+        int errorPos = -1;
+        double result = evaluateExpression(line, &errorPos);
+        if (errorPos == -1) {
+            fprintf(output, "%.5f\n", result);
+        } else {
+            fprintf(output, "error in  %d char\n", errorPos);
+        }
+    }
+
+    fclose(input);
+    fclose(output);
+    printf("results are in output.txt\n");
 }
