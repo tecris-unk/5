@@ -30,7 +30,7 @@ void createAndFindMaxInStack()
                  printf("\nEnter new element\n");
                  int data;
                  setNumber(&data);
-                 stack = push(stack, data, &size, maxSize);
+                 stack = push(stack, data, &size, maxSize, 0);
                  break;
              case '2':
                  printf("\nHere is your full stack\n");
@@ -76,12 +76,12 @@ void uniteAndSortTwoStacks()
             case '1':
                 printf("Enter new element for first stack\n");
                 setNumber(&data);
-                stack1 = push(stack1, data, &size1, maxSize);
+                stack1 = push(stack1, data, &size1, maxSize, 1);
                 break;
             case '2':
                 printf("Enter new element for second stack\n");
                 setNumber(&data);
-                stack2 = push(stack2, data, &size2, maxSize);
+                stack2 = push(stack2, data, &size2, maxSize, 2);
                 break;
             case '3':
                 stack3 = mergeStacks(reverseStack(stack1), stack2);

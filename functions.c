@@ -35,11 +35,15 @@ int min(int first, int second)
     return first < second ? first : second;
 }
 
-Stack* push(Stack* top, int data, int *size, int maxSize)
+Stack* push(Stack* top, int data, int *size, int maxSize, int order)
 {
     if(size != NULL && *size == maxSize)
     {
         printf("You cant add more elements, looser lol\n");
+        return top;
+    }
+    else if(top != NULL && ((order == 1 && data > top->data) || (order == 2 && data < top->data))){
+        printf("You cant add this element\n");
         return top;
     }
     else if(size != NULL){(*size)++;}
@@ -82,7 +86,7 @@ Stack* reverseStack(Stack* stack)
     Stack* resultStack = NULL;
     Stack* tempStack = stack;
     while (tempStack != NULL) {
-        resultStack = push(resultStack, tempStack->data, NULL, 0);
+        resultStack = push(resultStack, tempStack->data, NULL, 0, 0);
         tempStack = tempStack->next;
     }
     return resultStack;
@@ -101,11 +105,11 @@ Stack* mergeStacks(Stack* stack1, Stack* stack2) {
     Stack* resultStack = NULL;
 
     if(data1 >= data2){
-        resultStack = push(resultStack, data1, NULL, 0);
+        resultStack = push(resultStack, data1, NULL, 0, 0);
         resultStack->next = mergeStacks(nextStack1, stack2);
     }
     else{
-        resultStack = push(resultStack, data2, NULL, 0);
+        resultStack = push(resultStack, data2, NULL, 0, 0);
         resultStack->next = mergeStacks(stack1, nextStack2);
     }
     return resultStack;

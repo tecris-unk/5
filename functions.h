@@ -17,7 +17,7 @@ int getAnswer();
 int max(int first, int second);
 int min(int first, int second);
 
-Stack* push(Stack* top, int data, int*size, int maxSize);
+Stack* push(Stack* top, int data, int *size, int maxSize, int order);
 Stack* pop(Stack* top);
 void show(Stack* top);
 int findMax(Stack* top, int max);
