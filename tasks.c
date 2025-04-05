@@ -55,7 +55,7 @@ void uniteAndSortTwoStacks()
     int maxSize, size1 = 0, size2 = 0;
     setNumber(&maxSize);
 
-    Stack *stack1, *stack2;
+    Stack *stack1, *stack2, *stack3 = NULL;
     stack1 = NULL;
     stack2 = NULL;
 
@@ -63,8 +63,7 @@ void uniteAndSortTwoStacks()
     printf(
             "1 - add object in first stack\n"
             "2 - add object in second stack\n"
-            "2 - show full stack\n"
-            "3 - find max element\n"
+            "3 - unite and show full stack\n"
             "4 - Exit task\n"
     );
     while(1)
@@ -85,10 +84,10 @@ void uniteAndSortTwoStacks()
                 stack2 = push(stack2, data, &size2, maxSize);
                 break;
             case '3':
+                stack3 = mergeStacks(reverseStack(stack1), stack2);
                 printf("Here is united sorted stack: \n");
-                Stack *stack3 = NULL;
-                    stack3 = mergeStacks(stack1, stack2);
                 show(stack3);
+                break;
             case '4':
                 while(stack1 != NULL)
                     stack1 = pop(stack1);

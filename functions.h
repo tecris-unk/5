@@ -21,7 +21,8 @@ Stack* push(Stack* top, int data, int*size, int maxSize);
 Stack* pop(Stack* top);
 void show(Stack* top);
 int findMax(Stack* top, int max);
-int getLast(Stack* stack, int last);
+
+Stack* reverseStack(Stack* stack);
 Stack* mergeStacks(Stack* stack1, Stack* stack2);
 
 void createAndFindMaxInStack();

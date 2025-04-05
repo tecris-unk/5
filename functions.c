@@ -76,19 +76,22 @@ int findMax(Stack* top, int max)
     }
     return max;
 }
-int getLast(Stack* stack, int last)
+
+Stack* reverseStack(Stack* stack)
 {
-    if(stack == NULL){return last;}
-    return getLast(stack->next, stack->data);
+    Stack* resultStack = NULL;
+    Stack* tempStack = stack;
+    while (tempStack != NULL) {
+        resultStack = push(resultStack, tempStack->data, NULL, 0);
+        tempStack = tempStack->next;
+    }
+    return resultStack;
 }
-
 Stack* mergeStacks(Stack* stack1, Stack* stack2) {
-
 
     if (stack1 == NULL && stack2 == NULL) {
         return NULL;
     }
-
     int data1 = (stack1 != NULL) ? stack1->data : INT_MIN;
     int data2 = (stack2 != NULL) ? stack2->data : INT_MIN;
 
@@ -100,12 +103,10 @@ Stack* mergeStacks(Stack* stack1, Stack* stack2) {
     if(data1 >= data2){
         resultStack = push(resultStack, data1, NULL, 0);
         resultStack->next = mergeStacks(nextStack1, stack2);
-        pop(stack1);
     }
     else{
         resultStack = push(resultStack, data2, NULL, 0);
         resultStack->next = mergeStacks(stack1, nextStack2);
-        pop(stack2);
     }
     return resultStack;
 }
