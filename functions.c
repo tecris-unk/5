@@ -194,12 +194,30 @@ int isDigitOrDot(char c)
     return isdigit(c) || c == '.';
 }
 
+int solveOne(DoubleStack** valStack, char op)
+{
+    double b = doublePeek(*valStack);
+    *valStack = doublePop(*valStack);
+    double a = doublePeek(*valStack);
+    *valStack = doublePop(*valStack);
 
+    switch (op) {
+        case '+': *valStack = doublePush(*valStack, a + b); break;
+        case '-': *valStack = doublePush(*valStack, a - b); break;
+        case '*': *valStack = doublePush(*valStack, a * b); break;
+        case '/':
+            if (b == 0) {
+                return 0;
+            }
+            *valStack = doublePush(*valStack, a / b);
+            break;
+    }
+    return 1;
+}
 double evaluateExpression(const char *expr, int *errorPos)
 {
     CharStack *opStack = NULL;
     DoubleStack *valStack = NULL;
-
 
     int i = 0;
     unsigned int len = strlen(expr);
@@ -233,7 +251,6 @@ double evaluateExpression(const char *expr, int *errorPos)
             continue;
         }
 
-
         if (expr[i] == '(') {
             opStack = charPush(opStack, expr[i]);
             i++;
@@ -245,30 +262,13 @@ double evaluateExpression(const char *expr, int *errorPos)
             while (opStack!=NULL && charPeek(opStack) != '(') {
                 char op = charPeek(opStack);
                 opStack = charPop(opStack);
-                double b = doublePeek(valStack);
-                valStack = doublePop(valStack);
-                double a = doublePeek(valStack);
-                valStack = doublePop(valStack);
-                switch (op) {
-                    case '+': valStack = doublePush(valStack, a + b); break;
-                    case '-': valStack = doublePush(valStack, a - b); break;
-                    case '*': valStack = doublePush(valStack, a * b); break;
-                    case '/':
-                        if (b == 0) {
-                            *errorPos = i;
-                            return 0;
-                        }
-                        valStack = doublePush(valStack, a / b);
-                        break;
-                }
+                if(!solveOne(&valStack, op)){*errorPos = i;}
             }
 
             if (opStack == NULL) {
                 *errorPos = i;
                 while(valStack != NULL)
-                {
                     valStack = doublePop(valStack);
-                }
                 return 0;
             }
             opStack = charPop(opStack);
@@ -276,8 +276,7 @@ double evaluateExpression(const char *expr, int *errorPos)
             unary = 0;
             continue;
         }
-
-
+        
         if (isOperator(expr[i])) {
 
             if (expr[i] == '-' && unary) {
@@ -287,24 +286,11 @@ double evaluateExpression(const char *expr, int *errorPos)
             while (opStack!=NULL &&
                    charPeek(opStack) != '(' &&
                    precedence(charPeek(opStack)) >= precedence(expr[i])) {
+
                 char op = charPeek(opStack);
                 opStack = charPop(opStack);
-                double b = doublePeek(valStack);
-                valStack = doublePop(valStack);
-                double a = doublePeek(valStack);
-                valStack = doublePop(valStack);
-                switch (op) {
-                    case '+': valStack = doublePush(valStack, a + b); break;
-                    case '-': valStack = doublePush(valStack, a - b); break;
-                    case '*': valStack = doublePush(valStack, a * b); break;
-                    case '/':
-                        if (b == 0) {
-                            *errorPos = i;
-                            return 0;
-                        }
-                        valStack = doublePush(valStack, a / b);
-                        break;
-                }
+
+                if(!solveOne(&valStack, op)){*errorPos = i;}
             }
             opStack = charPush(opStack, expr[i]);
             i++;
@@ -323,24 +309,7 @@ double evaluateExpression(const char *expr, int *errorPos)
             *errorPos = i;
             return 0;
         }
-
-        double b = doublePeek(valStack);
-        valStack = doublePop(valStack);
-        double a = doublePeek(valStack);
-        valStack = doublePop(valStack);
-
-        switch (op) {
-            case '+': valStack = doublePush(valStack, a + b); break;
-            case '-': valStack = doublePush(valStack, a - b); break;
-            case '*': valStack = doublePush(valStack, a * b); break;
-            case '/':
-                if (b == 0) {
-                    *errorPos = i;
-                    return 0;
-                }
-                valStack = doublePush(valStack, a / b);
-                break;
-        }
+        if(!solveOne(&valStack, op)){*errorPos = i;}
     }
     double answer = doublePeek(valStack);
     valStack = doublePop(valStack);

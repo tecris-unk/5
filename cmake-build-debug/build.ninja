@@ -67,6 +67,12 @@ build CMakeFiles/5.dir/tasks.c.obj: C_COMPILER__5_unscanned_Debug C$:/Users/inta
   OBJECT_DIR = CMakeFiles\5.dir
   OBJECT_FILE_DIR = CMakeFiles\5.dir
 
+build CMakeFiles/5.dir/mystring.c.obj: C_COMPILER__5_unscanned_Debug C$:/Users/intak/Desktop/LAB_2SEM/5/mystring.c || cmake_object_order_depends_target_5
+  DEP_FILE = CMakeFiles\5.dir\mystring.c.obj.d
+  FLAGS = -g -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\5.dir
+  OBJECT_FILE_DIR = CMakeFiles\5.dir
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target 5
@@ -75,7 +81,7 @@ build CMakeFiles/5.dir/tasks.c.obj: C_COMPILER__5_unscanned_Debug C$:/Users/inta
 #############################################
 # Link the executable 5.exe
 
-build 5.exe: C_EXECUTABLE_LINKER__5_Debug CMakeFiles/5.dir/main.c.obj CMakeFiles/5.dir/functions.c.obj CMakeFiles/5.dir/tasks.c.obj
+build 5.exe: C_EXECUTABLE_LINKER__5_Debug CMakeFiles/5.dir/main.c.obj CMakeFiles/5.dir/functions.c.obj CMakeFiles/5.dir/tasks.c.obj CMakeFiles/5.dir/mystring.c.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\5.dir

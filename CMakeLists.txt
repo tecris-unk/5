@@ -8,4 +8,5 @@ add_executable(5 main.c
         stack.h
         functions.c
         tasks.c
-        tasks.h)
+        mystring.c
+        mystring.h)
